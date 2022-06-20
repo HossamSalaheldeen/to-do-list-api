@@ -6,10 +6,15 @@ use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Task::class);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -103,5 +108,23 @@ class TaskController extends Controller
         return response([
             'message'  => 'Task deleted successfully',
         ],Response::HTTP_OK);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateTaskRequest  $request
+     * @param  \App\Models\Task  $task
+     * @return \Illuminate\Http\Response
+     */
+    public function changeStatus(Request $request, Task $task)
+    {
+        $taskData = $request->only('is_complete');
+
+        $task->update($taskData);
+
+        return TaskResource::make($task)->additional([
+            'message' =>  'Task Completed successfully'
+        ])->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 }

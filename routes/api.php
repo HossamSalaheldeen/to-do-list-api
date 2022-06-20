@@ -23,6 +23,7 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::put('tasks/{task}/changeStatus', [TaskController::class, 'changeStatus'])->name('tasks.changeStatus');
     Route::apiResource('tasks', TaskController::class);
 });
 

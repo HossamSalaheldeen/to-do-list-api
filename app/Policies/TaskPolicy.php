@@ -18,7 +18,7 @@ class TaskPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,12 @@ class TaskPolicy
      */
     public function view(User $user, Task $task)
     {
-        //
+        if ($user->id == $task->user_id)
+        {
+            return true;
+        }
+
+        return $this->deny('Can not view this task');
     }
 
     /**
@@ -41,7 +46,7 @@ class TaskPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +58,12 @@ class TaskPolicy
      */
     public function update(User $user, Task $task)
     {
-        //
+        if ($user->id == $task->user_id)
+        {
+            return true;
+        }
+
+        return $this->deny('Can not update this task');
     }
 
     /**
@@ -65,7 +75,12 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task)
     {
-        //
+        if ($user->id == $task->user_id)
+        {
+            return true;
+        }
+
+        return $this->deny('Can not delete this task');
     }
 
     /**
