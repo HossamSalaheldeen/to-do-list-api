@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
@@ -15,7 +16,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-
+        $tasks = Task::all();
+        return TaskResource::collection($tasks);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,4 +16,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('tasks', TaskController::class);
+Route::controller(AuthController::class)->group(function () {
+    Route::post('register', 'register')->name('register');
+    Route::post('login', 'login')->name('login');
+});
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::apiResource('tasks', TaskController::class);
+});
+
