@@ -6,6 +6,7 @@ use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
@@ -16,7 +17,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        $tasks = Task::query()->whereBelongsTo(auth()->user())->get();
         return TaskResource::collection($tasks);
     }
 
@@ -38,7 +39,13 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        //
+        $taskData = $request->safe()->only('title');
+
+        $task = auth()->user()->tasks()->create($taskData);
+
+        return TaskResource::make($task)->additional([
+            'message' =>  'Task Created successfully'
+        ])->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -49,7 +56,9 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        return TaskResource::make($task)->additional([
+            'message' =>  'Task Showed successfully'
+        ])->response()->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -60,7 +69,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        //
+
     }
 
     /**
@@ -72,7 +81,13 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        $taskData = $request->safe()->only('title');
+
+        $task->update($taskData);
+
+        return TaskResource::make($task)->additional([
+            'message' =>  'Task updated successfully'
+        ])->response()->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -83,6 +98,10 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->user()->dissociate();
+        $task->delete();
+        return response([
+            'message'  => 'Task deleted successfully',
+        ],Response::HTTP_OK);
     }
 }

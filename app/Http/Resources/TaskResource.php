@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Arr;
 
 class TaskResource extends JsonResource
 {
@@ -14,10 +15,11 @@ class TaskResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        return Arr::whereNotNull([
+            'id' => $this->id,
             'title' => $this->title,
             'is_complete' => $this->is_complete,
-            'user' => $this->user->name
-        ];
+            'user' => UserResource::make($this->user)
+        ]);
     }
 }
