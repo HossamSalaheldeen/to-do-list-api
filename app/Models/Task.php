@@ -18,6 +18,8 @@ class Task extends Model
         'user_id'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     //########################################### Relations ################################################
     public function user()
     {
